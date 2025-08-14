@@ -141,7 +141,7 @@
             <div id="gemini-status" class="text-xs sm:text-sm text-gray-600 mt-2 h-5"></div>
         </footer>
         
-        <footer class="mt-4 sm:mt-6 border-t pt-4 text-gray-600 font-sans">
+        <div class="mt-4 sm:mt-6 border-t pt-4 text-gray-600 font-sans">
             <div class="flex flex-col items-center text-center space-y-2">
                 <p class="font-bold text-lg sm:text-xl text-gray-800">Kanan Pandit</p>
                 <p class="text-xs sm:text-sm italic">Aspiring Data Scientist & AI Enthusiast</p>
@@ -160,7 +160,7 @@
                     নাম পরিবর্তন করুন
                 </button>
             </div>
-        </footer>
+        </div>
 
     </div>
 
@@ -274,8 +274,13 @@
             try {
                 geminiStatus.textContent = 'বার্তা তৈরি হচ্ছে...';
                 let textPayload = { contents: [{ role: "user", parts: [{ text: textGenPrompt }] }] };
-                const apiKey = "AIzaSyBaKzXWuh240jWKbS7Cfv7GInT-z1D4wvo";
-                let textApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                
+                // --- FIX 1: API Key is now a placeholder for security ---
+                // IMPORTANT: Replace this with your actual API key, but DO NOT commit it to a public repository.
+                // It's best to use a server-side script to handle API calls securely.
+                const apiKey = "YOUR_API_KEY_HERE"; 
+                
+                let textApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
                 
                 let response = await fetch(textApiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(textPayload) });
                 if (!response.ok) {
@@ -288,39 +293,22 @@
 
                 geminiStatus.textContent = 'অডিও তৈরি হচ্ছে...';
                 const ttsPrompt = generatedText; 
-                let ttsPayload = { contents: [{ parts: [{ text: ttsPrompt }] }], generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } } }, model: "gemini-2.5-flash-preview-tts" };
-                let ttsApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
                 
-                response = await fetch(ttsApiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(ttsPayload) });
-                if (!response.ok) {
-                     const errorBody = await response.json().catch(() => response.text());
-                    throw new Error(`TTS generation failed: ${JSON.stringify(errorBody)}`);
-                }
-                result = await response.json();
-                
-                if (!result.candidates || result.candidates.length === 0) {
-                    console.error("TTS API returned no candidates. Response:", result);
-                    throw new Error("Failed to generate audio from the text.");
+                // Using a browser-based TTS as a fallback or primary method if a dedicated TTS API is not available
+                if ('speechSynthesis' in window) {
+                    geminiStatus.textContent = 'বলা হচ্ছে...';
+                    const utterance = new SpeechSynthesisUtterance(ttsPrompt);
+                    utterance.lang = 'bn-IN';
+                    utterance.onend = () => {
+                         geminiStatus.textContent = '';
+                        if (wasMusicPlaying) { Tone.Transport.start(); }
+                        allButtons.forEach(btn => btn.disabled = false);
+                    };
+                    speechSynthesis.speak(utterance);
+                } else {
+                     throw new Error("Browser does not support Speech Synthesis.");
                 }
 
-                const audioPart = result?.candidates?.[0]?.content?.parts?.[0];
-                const audioData = audioPart?.inlineData?.data; 
-                const mimeType = audioPart?.inlineData?.mimeType;
-                if (!audioData || !mimeType || !mimeType.startsWith("audio/")) { throw new Error("Invalid audio data received."); }
-
-                geminiStatus.textContent = 'বলা হচ্ছে...';
-                const sampleRate = parseInt(mimeType.match(/rate=(\d+)/)[1], 10);
-                const pcmData = base64ToArrayBuffer(audioData); 
-                const pcm16 = new Int16Array(pcmData);
-                const wavBlob = pcmToWav(pcm16, sampleRate); 
-                const audioUrl = URL.createObjectURL(wavBlob);
-                const audio = new Audio(audioUrl);
-                audio.play();
-                audio.onended = () => {
-                    geminiStatus.textContent = '';
-                    if (wasMusicPlaying) { Tone.Transport.start(); }
-                    allButtons.forEach(btn => btn.disabled = false);
-                };
             } catch (error) {
                 console.error("Error with Gemini feature:", error);
                 geminiStatus.textContent = 'দুঃখিত, একটি ত্রুটি ঘটেছে।';
@@ -451,3 +439,5 @@
 
 </body>
 </html>
+
+i found a another issue in tts can you check what is this . and how i fix this
