@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>স্বাধীনতা দিবসের শুভেচ্ছা</title>
+<style>
+body,html{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  font-family:Arial,sans-serif;
+  overflow:hidden;
+  background:linear-gradient(180deg,#FF9933 33%,#FFF 33%,#FFF 66%,#138808 66%);
+  color:#000;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+}
+.container{
+  z-index:1;
+  position:relative;
+  width:90%;
+  max-width:500px;
+}
+.chakra{
+  width:120px;
+  height:120px;
+  animation:rotate 5s linear infinite;
+  margin-bottom:15px;
+}
+@keyframes rotate{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
+h1{
+  font-size:1.5em;
+  margin-bottom:12px;
+  white-space:pre-line;
+}
+h2{
+  font-size:1.2em;
+  margin:4px;
+}
+p{margin:3px; word-break: break-word;}
+a{color:#000080;text-decoration:none;margin:0 5px;}
+input,select,button{
+  padding:8px 12px;
+  font-size:1em;
+  margin:5px 0;
+  border-radius:5px;
+  border:1px solid #000080;
+  width:100%;
+  box-sizing:border-box;
+}
+button{cursor:pointer;background-color:#000080;color:#fff;}
+footer{
+  position:relative;
+  bottom:0;
+  width:100%;
+  background:#fff;
+  padding:10px 0;
+  font-size:0.9em;
+  color:#000;
+  text-align:center;
+  word-break: break-word;
+}
+.firework{
+  position:absolute;
+  width:4px;
+  height:20px;
+  background:#fff;
+  animation:fire 1s linear infinite;
+  opacity:0.8;
+  border-radius:50%;
+}
+@keyframes fire{
+  0%{transform:translateY(0) scaleY(1);opacity:1;}
+  100%{transform:translateY(-400px) scaleY(0.5);opacity:0;}
+}
+@media (max-width:480px){
+  .chakra{width:100px;height:100px;}
+  h1{font-size:1.3em;}
+  h2{font-size:1em;}
+  input, select, button{font-size:0.95em;}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<svg class="chakra" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="45" stroke="#000080" stroke-width="4" fill="none"/>
+  <circle cx="50" cy="50" r="30" fill="#FFFFFF"/>
+  <g stroke="#000080" stroke-width="2"></g>
+</svg>
+
+<h1 id="greeting">শুভ ৭৯তম স্বাধীনতা দিবস!</h1>
+<h2 id="name">Kanan Pandit</h2>
+<p id="role">Aspiring Data Scientist & AI Enthusiast</p>
+<p>
+<a href="https://kananpanditportfolio.netlify.app" target="_blank">Website</a> |
+<a href="https://linkedin.com/in/kananpandit02" target="_blank">LinkedIn</a> |
+<a href="https://github.com/kananpandit02" target="_blank">GitHub</a>
+</p>
+<p>Email: kananpandit02@gmail.com | Phone: +91 7384661310</p>
+
+<!-- Interactive Bengali instructions -->
+<p>আপনার নাম লিখুন এবং একটি স্টাইল বাছাই করুন, তারপর "শুভেচ্ছা দেখুন" বোতামে ক্লিক করুন:</p>
+<input type="text" id="visitorName" placeholder="আপনার নাম লিখুন">
+<select id="greetingStyle">
+  <option value="formal">Formal</option>
+  <option value="fun">Fun</option>
+  <option value="inspirational">Inspirational</option>
+</select>
+<button onclick="personalizeGreeting()">শুভেচ্ছা দেখুন</button>
+</div>
+
+<footer>
+<p>Developed by Kanan Pandit | Website: <a href="https://kananpanditportfolio.netlify.app" target="_blank">kananpanditportfolio.netlify.app</a> | Email: kananpandit02@gmail.com | Phone: +91 7384661310</p>
+</footer>
+
+<script>
+// Draw 24 spokes
+const svgNS="http://www.w3.org/2000/svg",g=document.querySelector('svg g');
+for(let s=0;s<24;s++){
+  const line=document.createElementNS(svgNS,'line');
+  const angle=s*360/24*Math.PI/180;
+  const x2=50+30*Math.cos(angle), y2=50+30*Math.sin(angle);
+  line.setAttribute('x1',50);
+  line.setAttribute('y1',50);
+  line.setAttribute('x2',x2);
+  line.setAttribute('y2',y2);
+  g.appendChild(line);
+}
+
+// Typewriter function
+function typeWriter(message, elementId, speed=50){
+    let i=0;
+    document.getElementById(elementId).innerHTML="";
+    function type(){if(i<message.length){document.getElementById(elementId).innerHTML+=message.charAt(i);i++;setTimeout(type,speed);}}
+    type();
+}
+
+// Greetings by style
+function getGreeting(visitor, style){
+    if(style==='formal') return `শুভ ৭৯তম স্বাধীনতা দিবস, ${visitor}! \nআজ আমরা আমাদের দেশের স্বাধীনতা ও ঐক্যের প্রতি শ্রদ্ধা জানাই।\n– Kanan Pandit`;
+    if(style==='fun') return `হ্যালো ${visitor}! 🎉🇮🇳\nস্বাধীনতা দিবস উদযাপন করুন মজা করে, আনন্দে ভরা দিন কাটুক!\n– Kanan Pandit`;
+    if(style==='inspirational') return `প্রিয় ${visitor},\nশুভ ৭৯তম স্বাধীনতা দিবস! 🇮🇳\nচলুন আমরা দেশের জন্য স্বপ্ন দেখি, কাজ করি এবং এগিয়ে যাই!\n– Kanan Pandit`;
+    return `শুভ ৭৯তম স্বাধীনতা দিবস, ${visitor}! 🇮🇳 – Kanan Pandit`;
+}
+
+// Initial greeting
+typeWriter(`শুভ ৭৯তম স্বাধীনতা দিবস! \nচলুন একসাথে আমাদের দেশকে আরও সমৃদ্ধ করি।\n– Kanan Pandit`,"greeting");
+
+// Personalized greeting
+function personalizeGreeting(){
+    const visitor=document.getElementById("visitorName").value.trim() || "বন্ধু";
+    const style=document.getElementById("greetingStyle").value;
+    typeWriter(getGreeting(visitor, style),"greeting");
+    spawnFireworks();
+}
+
+// Fireworks/confetti effect
+const colors=["#FF9933","#138808","#000080","#FFFFFF"];
+function spawnFireworks(){
+  for(let j=0;j<30;j++){
+    const fire=document.createElement('div');
+    fire.classList.add('firework');
+    fire.style.left=Math.random()*window.innerWidth+'px';
+    fire.style.animationDelay=Math.random()*2+'s';
+    fire.style.background=colors[Math.floor(Math.random()*colors.length)];
+    fire.style.width=Math.random()*6+2+'px';
+    fire.style.height=Math.random()*20+10+'px';
+    document.body.appendChild(fire);
+    setTimeout(()=>fire.remove(),2000);
+  }
+}
+</script>
+
+</body>
+</html>
