@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>শুভ ৭৯তম স্বাধীনতা দিবস!</title>
-    <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Tone.js for audio generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
-    <!-- Google Fonts: Noto Sans Bengali and Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+Bengali:wght@400;700;900&display=swap" rel="stylesheet">
@@ -72,7 +69,6 @@
 
     <canvas id="confetti-canvas"></canvas>
 
-    <!-- Name Input Modal -->
     <div id="name-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-center w-11/12 max-w-sm">
             <h2 class="text-xl sm:text-2xl font-bold mb-4 text-gray-800">শুভ ৭৯তম স্বাধীনতা দিবস!</h2>
@@ -84,7 +80,6 @@
         </div>
     </div>
     
-    <!-- Horoscope Input Modal -->
     <div id="horoscope-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-center w-11/12 max-w-sm">
             <h2 class="text-xl sm:text-2xl font-bold mb-4 text-gray-800">আপনার রাশিফল জানুন</h2>
@@ -97,7 +92,6 @@
         </div>
     </div>
     
-    <!-- Q&A Input Modal -->
     <div id="qa-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-center w-11/12 max-w-sm">
             <h2 class="text-xl sm:text-2xl font-bold mb-4 text-gray-800">Your AI Assistant</h2>
@@ -119,7 +113,6 @@
 
     <div id="main-content" class="content-wrapper w-full max-w-4xl mx-auto bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-4 md:p-6 text-center text-gray-800 overflow-y-auto hidden max-h-full">
 
-        <!-- Header Section -->
         <header class="relative mb-4 sm:mb-6">
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10 w-40 h-40 sm:w-56 sm:h-56">
                 <svg class="ashok-chakra" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -132,14 +125,12 @@
             <p class="text-sm sm:text-base md:text-lg mt-2 text-blue-800 font-semibold">স্বাধীনতা, একতা এবং অগ্রগতির উদযাপন</p>
         </header>
 
-        <!-- Greetings Section -->
         <main class="space-y-3 sm:space-y-4">
             <div class="p-3 sm:p-4 bg-orange-100/50 rounded-lg transition-transform transform hover:-translate-y-1"><p class="text-xs sm:text-base">"মনে স্বাধীনতা, কথায় বিশ্বাস, আত্মায় গর্ব। আসুন এই শুভ দিনে জাতিকে স্যালুট জানাই। জয় হিন্দ!"</p></div>
             <div class="p-3 sm:p-4 bg-green-100/50 rounded-lg transition-transform transform hover:-translate-y-1"><p class="text-xs sm:text-base">"ভারতের তেরঙ্গা যেন সর্বদা উঁচুতে ওড়ে। স্বাধীনতা দিবসের এই মহান অনুষ্ঠানে আন্তরিক শুভেচ্ছা।"</p></div>
             <div class="p-3 sm:p-4 bg-blue-100/50 rounded-lg transition-transform transform hover:-translate-y-1"><p class="text-xs sm:text-base">"এই দিনে, আসুন আমরা আমাদের মুক্তিযোদ্ধাদের আত্মত্যাগ স্মরণ করি এবং এমন একটি ভারত গড়ার শপথ করি যা নিয়ে তারা গর্বিত হবে।"</p></div>
         </main>
 
-        <!-- Control Section -->
         <footer class="mt-4 sm:mt-6">
             <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
                 <button id="music-button" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-5 sm:py-3 sm:px-8 rounded-full shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 w-full sm:w-auto text-sm sm:text-base">দেশাত্মবোধক সঙ্গীত চালান</button>
@@ -150,7 +141,6 @@
             <div id="gemini-status" class="text-xs sm:text-sm text-gray-600 mt-2 h-5"></div>
         </footer>
         
-        <!-- Developer Info Footer -->
         <footer class="mt-4 sm:mt-6 border-t pt-4 text-gray-600 font-sans">
             <div class="flex flex-col items-center text-center space-y-2">
                 <p class="font-bold text-lg sm:text-xl text-gray-800">Kanan Pandit</p>
@@ -165,6 +155,10 @@
                     <p>📱 Phone: <a href="tel:+917384661310" class="hover:underline">+91 7384661310</a></p>
                 </div>
                 <p class="text-xs mt-2">Made with ❤️ by <span class="font-semibold">Kanan Pandit</span></p>
+                
+                <button id="change-name-button" class="w-full sm:w-auto bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-5 sm:py-3 sm:px-8 rounded-full shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300 text-sm sm:text-base mt-4">
+                    নাম পরিবর্তন করুন
+                </button>
             </div>
         </footer>
 
@@ -192,7 +186,8 @@
         const closeQaModalButton = document.getElementById('close-qa-modal');
         const startRecognitionButton = document.getElementById('start-recognition-button');
         const recognitionStatus = document.getElementById('recognition-status');
-        
+        const changeNameButton = document.getElementById('change-name-button'); // New element
+
         // --- Personalization Logic ---
         function showPersonalizedView(name) {
             mainGreeting.textContent = `শুভ স্বাধীনতা দিবস, ${name}!`;
@@ -217,6 +212,15 @@
             const savedName = localStorage.getItem('visitorName');
             if (savedName) showPersonalizedView(savedName);
             else nameModal.classList.remove('hidden');
+        });
+
+        // Add event listener for the new "Change Name" button
+        changeNameButton.addEventListener('click', () => {
+            localStorage.removeItem('visitorName');
+            mainContent.classList.add('hidden');
+            nameModal.classList.remove('hidden');
+            nameInput.value = ''; // Clear the input for the new user
+            nameInput.focus();
         });
 
         // --- Music & Voice Logic ---
@@ -263,7 +267,7 @@
 
         async function getAndSpeak(textGenPrompt) {
             let wasMusicPlaying = musicPlaying;
-            const allButtons = [geminiTalkButton, musicButton, horoscopeButton, aiAssistantButton];
+            const allButtons = [geminiTalkButton, musicButton, horoscopeButton, aiAssistantButton, changeNameButton]; // Added the new button here
             allButtons.forEach(btn => btn.disabled = true);
             if (wasMusicPlaying) { Tone.Transport.pause(); }
 
@@ -447,6 +451,3 @@
 
 </body>
 </html>
-
-
-
