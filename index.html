@@ -3,18 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>শুভ ৭৯তম স্বাধীনতা দিবস!</title>
+    <title>শুভ স্বাধীনতা দিবস!</title>
+    <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tone.js for audio generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <!-- Google Fonts: Noto Sans Bengali and Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+Bengali:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
+        /* Use the Noto Sans Bengali font family with Inter as a fallback */
         html, body {
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden;
+            overflow: hidden; /* Prevent scrolling on the body */
         }
         body {
             font-family: 'Noto Sans Bengali', 'Inter', sans-serif;
@@ -22,98 +26,131 @@
             align-items: center;
             justify-content: center;
         }
-        #flag-canvas {
+        /* Custom gradient using the Indian flag colors */
+        .tricolor-gradient {
+            background: linear-gradient(180deg, #FF9933 0%, #FFFFFF 50%, #138808 100%);
+        }
+        /* Ashok Chakra inspired SVG */
+        .ashok-chakra {
+            animation: spin 20s linear infinite;
+        }
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        /* Canvas for confetti effect */
+        #confetti-canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0;
+            z-index: 1; /* Behind modal, above content */
+            pointer-events: none; /* Make canvas unclickable */
         }
-        .ashok-chakra {
-            animation: spin 20s linear infinite;
-        }
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
+        /* Ensure content is above the canvas */
         .content-wrapper {
             position: relative;
             z-index: 2;
         }
+        /* Modal styles */
         #name-modal, #horoscope-modal, #qa-modal {
             z-index: 10;
         }
+        /* Disabled button style */
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
     </style>
 </head>
-<body class="p-2 sm:p-4">
+<body class="tricolor-gradient p-2 sm:p-4">
 
-    <canvas id="flag-canvas"></canvas>
+    <canvas id="confetti-canvas"></canvas>
 
-    <!-- Modals -->
+    <!-- Name Input Modal -->
     <div id="name-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-center w-11/12 max-w-sm text-gray-800">
-            <h2 class="text-xl sm:text-2xl font-bold mb-4">শুভ ৭৯তম স্বাধীনতা দিবস!</h2>
-            <p class="mb-6 text-sm sm:text-base">ব্যক্তিগত শুভেচ্ছা পেতে আপনার নাম লিখুন।</p>
+        <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-center w-11/12 max-w-sm">
+            <h2 class="text-xl sm:text-2xl font-bold mb-4 text-gray-800">শুভ স্বাধীনতা দিবস!</h2>
+            <p class="mb-6 text-gray-600 text-sm sm:text-base">ব্যক্তিগত শুভেচ্ছা পেতে আপনার নাম লিখুন।</p>
             <input type="text" id="name-input" placeholder="আপনার নাম" class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <button id="submit-name-button" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg">আমার শুভেচ্ছা পান</button>
+            <button id="submit-name-button" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg transition-transform transform hover:scale-105">
+                আমার শুভেচ্ছা পান
+            </button>
         </div>
     </div>
     
+    <!-- Horoscope Input Modal -->
     <div id="horoscope-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-center w-11/12 max-w-sm text-gray-800">
-            <h2 class="text-xl sm:text-2xl font-bold mb-4">আপনার রাশিফল জানুন</h2>
-            <p class="mb-6 text-sm sm:text-base">আপনার জন্মতারিখ দিন।</p>
-            <input type="date" id="dob-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4">
-            <button id="submit-horoscope-button" class="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg">রাশিফল পান</button>
-            <button id="close-horoscope-modal" class="w-full mt-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg">বন্ধ করুন</button>
+        <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-center w-11/12 max-w-sm">
+            <h2 class="text-xl sm:text-2xl font-bold mb-4 text-gray-800">আপনার রাশিফল জানুন</h2>
+            <p class="mb-6 text-gray-600 text-sm sm:text-base">আপনার জন্মতারিখ দিন।</p>
+            <input type="date" id="dob-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button id="submit-horoscope-button" class="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg transition-transform transform hover:scale-105">
+                রাশিফল পান
+            </button>
+             <button id="close-horoscope-modal" class="w-full mt-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg">বন্ধ করুন</button>
         </div>
     </div>
     
+    <!-- Q&A Input Modal -->
     <div id="qa-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-center w-11/12 max-w-sm text-gray-800">
-            <h2 class="text-xl sm:text-2xl font-bold mb-4">এআই অ্যাসিস্ট্যান্ট</h2>
-            <p class="mb-2 text-sm sm:text-base">আপনার প্রশ্ন জিজ্ঞাসা করুন।</p>
-            <textarea id="qa-input" placeholder="আপনার প্রশ্ন এখানে লিখুন অথবা মাইক্রোফোনে বলুন..." rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-2"></textarea>
+        <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-center w-11/12 max-w-sm">
+            <h2 class="text-xl sm:text-2xl font-bold mb-4 text-gray-800">Your AI Assistant</h2>
+            <p class="mb-2 text-gray-600 text-sm sm:text-base">আপনার প্রশ্ন জিজ্ঞাসা করুন।</p>
+            <textarea id="qa-input" placeholder="আপনার প্রশ্ন এখানে লিখুন অথবা মাইক্রোফোনে বলুন..." rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
             <div class="flex items-center gap-2 mb-4">
-                <button id="start-recognition-button" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold p-3 rounded-full">🎤</button>
+                <button id="start-recognition-button" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold p-3 rounded-full transition-transform transform hover:scale-110">
+                    🎤
+                </button>
                 <p id="recognition-status" class="text-sm text-gray-500 flex-grow text-left"></p>
             </div>
-            <button id="submit-qa-button" class="w-full bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded-lg">প্রশ্ন জমা দিন</button>
+            <button id="submit-qa-button" class="w-full bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded-lg transition-transform transform hover:scale-105">
+                প্রশ্ন জমা দিন
+            </button>
             <button id="close-qa-modal" class="w-full mt-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg">বন্ধ করুন</button>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div id="main-content" class="content-wrapper w-full max-w-4xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl p-4 md:p-6 text-center text-gray-800 overflow-y-auto hidden max-h-full">
+
+    <div id="main-content" class="content-wrapper w-full max-w-4xl mx-auto bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-4 md:p-6 text-center text-gray-800 overflow-y-auto hidden max-h-full">
+
+        <!-- Header Section -->
         <header class="relative mb-4 sm:mb-6">
-             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10 w-40 h-40 sm:w-56 sm:h-56">
-                <svg class="ashok-chakra" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="none" stroke="#000080" stroke-width="2"/><circle cx="50" cy="50" r="5" fill="#000080"/><g stroke="#000080" stroke-width="1"><path d="M50 5 L50 95" /><path d="M5 50 L95 50" /><path d="M14.6 14.6 L85.4 85.4" /><path d="M14.6 85.4 L85.4 14.6" /><path d="M29.3 7.7 L70.7 92.3" /><path d="M7.7 29.3 L92.3 70.7" /><path d="M7.7 70.7 L92.3 29.3" /><path d="M29.3 92.3 L70.7 7.7" /><path d="M50 5 a 45 45 0 0 1 35.3 17.6 l -3.5 -6.1" /><path d="M50 5 a 45 45 0 0 1 43.3 35.3 l -6.1 -3.5" /><path d="M50 95 a 45 45 0 0 1 -35.3 -17.6 l 3.5 6.1" /><path d="M50 95 a 45 45 0 0 1 -43.3 -35.3 l 6.1 3.5" /><path d="M95 50 a 45 45 0 0 1 -17.6 35.3 l -6.1 -3.5" /><path d="M95 50 a 45 45 0 0 1 -35.3 43.3 l -3.5 -6.1" /><path d="M5 50 a 45 45 0 0 1 17.6 -35.3 l 6.1 3.5" /><path d="M5 50 a 45 45 0 0 1 35.3 -43.3 l 3.5 6.1" /></g></svg>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10 w-40 h-40 sm:w-56 sm:h-56">
+                <svg class="ashok-chakra" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="#000080" stroke-width="2"/>
+                    <circle cx="50" cy="50" r="5" fill="#000080"/>
+                    <g stroke="#000080" stroke-width="1"><path d="M50 5 L50 95" /><path d="M5 50 L95 50" /><path d="M14.6 14.6 L85.4 85.4" /><path d="M14.6 85.4 L85.4 14.6" /><path d="M29.3 7.7 L70.7 92.3" /><path d="M7.7 29.3 L92.3 70.7" /><path d="M7.7 70.7 L92.3 29.3" /><path d="M29.3 92.3 L70.7 7.7" /><path d="M50 5 a 45 45 0 0 1 35.3 17.6 l -3.5 -6.1" /><path d="M50 5 a 45 45 0 0 1 43.3 35.3 l -6.1 -3.5" /><path d="M50 95 a 45 45 0 0 1 -35.3 -17.6 l 3.5 6.1" /><path d="M50 95 a 45 45 0 0 1 -43.3 -35.3 l 6.1 3.5" /><path d="M95 50 a 45 45 0 0 1 -17.6 35.3 l -6.1 -3.5" /><path d="M95 50 a 45 45 0 0 1 -35.3 43.3 l -3.5 -6.1" /><path d="M5 50 a 45 45 0 0 1 17.6 -35.3 l 6.1 3.5" /><path d="M5 50 a 45 45 0 0 1 35.3 -43.3 l 3.5 6.1" /></g>
+                </svg>
             </div>
-            <h1 id="main-greeting" class="text-2xl sm:text-3xl md:text-5xl font-black text-orange-600 drop-shadow-lg"></h1>
+            <h1 id="main-greeting" class="text-2xl sm:text-3xl md:text-5xl font-black text-orange-600 tracking-tight"></h1>
             <p class="text-sm sm:text-base md:text-lg mt-2 text-blue-800 font-semibold">স্বাধীনতা, একতা এবং অগ্রগতির উদযাপন</p>
         </header>
 
+        <!-- Greetings Section -->
         <main class="space-y-3 sm:space-y-4">
-            <div class="p-3 sm:p-4 bg-orange-100/50 rounded-lg"><p class="text-xs sm:text-base">"মনে স্বাধীনতা, কথায় বিশ্বাস, আত্মায় গর্ব। আসুন এই শুভ দিনে জাতিকে স্যালুট জানাই। জয় হিন্দ!"</p></div>
-            <div class="p-3 sm:p-4 bg-green-100/50 rounded-lg"><p class="text-xs sm:text-base">"ভারতের তেরঙ্গা যেন সর্বদা উঁচুতে ওড়ে। স্বাধীনতা দিবসের এই মহান অনুষ্ঠানে আন্তরিক শুভেচ্ছা।"</p></div>
-            <div class="p-3 sm:p-4 bg-blue-100/50 rounded-lg"><p class="text-xs sm:text-base">"এই দিনে, আসুন আমরা আমাদের মুক্তিযোদ্ধাদের আত্মত্যাগ স্মরণ করি এবং এমন একটি ভারত গড়ার শপথ করি যা নিয়ে তারা গর্বিত হবে।"</p></div>
+            <div class="p-3 sm:p-4 bg-orange-100/50 rounded-lg transition-transform transform hover:-translate-y-1"><p class="text-xs sm:text-base">"মনে স্বাধীনতা, কথায় বিশ্বাস, আত্মায় গর্ব। আসুন এই শুভ দিনে জাতিকে স্যালুট জানাই। জয় হিন্দ!"</p></div>
+            <div class="p-3 sm:p-4 bg-green-100/50 rounded-lg transition-transform transform hover:-translate-y-1"><p class="text-xs sm:text-base">"ভারতের তেরঙ্গা যেন সর্বদা উঁচুতে ওড়ে। স্বাধীনতা দিবসের এই মহান অনুষ্ঠানে আন্তরিক শুভেচ্ছা।"</p></div>
+            <div class="p-3 sm:p-4 bg-blue-100/50 rounded-lg transition-transform transform hover:-translate-y-1"><p class="text-xs sm:text-base">"এই দিনে, আসুন আমরা আমাদের মুক্তিযোদ্ধাদের আত্মত্যাগ স্মরণ করি এবং এমন একটি ভারত গড়ার শপথ করি যা নিয়ে তারা গর্বিত হবে।"</p></div>
         </main>
 
+        <!-- Control Section -->
         <footer class="mt-4 sm:mt-6">
             <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-                <button id="music-button" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-5 rounded-full shadow-lg text-sm sm:text-base">দেশাত্মবোধক সঙ্গীত চালান</button>
-                <button id="gemini-talk-button" class="bg-purple-700 hover:bg-purple-800 text-white font-bold py-2 px-5 rounded-full shadow-lg text-sm sm:text-base font-sans">Message from Kanan</button>
-                <button id="horoscope-button" class="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-5 rounded-full shadow-lg text-sm sm:text-base">আজকের রাশিফল</button>
-                <button id="ai-assistant-button" class="bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-2 px-5 rounded-full shadow-lg text-sm sm:text-base font-sans">AI Assistant</button>
+                <button id="music-button" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-5 sm:py-3 sm:px-8 rounded-full shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 w-full sm:w-auto text-sm sm:text-base">দেশাত্মবোধক সঙ্গীত চালান</button>
+                <button id="gemini-talk-button" class="bg-purple-700 hover:bg-purple-800 text-white font-bold py-2 px-5 sm:py-3 sm:px-8 rounded-full shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300 w-full sm:w-auto text-sm sm:text-base font-sans">Message from Kanan</button>
+                <button id="horoscope-button" class="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-5 sm:py-3 sm:px-8 rounded-full shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300 w-full sm:w-auto text-sm sm:text-base">আজকের রাশিফল</button>
+                <button id="ai-assistant-button" class="bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-2 px-5 sm:py-3 sm:px-8 rounded-full shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-indigo-300 w-full sm:w-auto text-sm sm:text-base font-sans">AI Assistant</button>
             </div>
             <div id="gemini-status" class="text-xs sm:text-sm text-gray-600 mt-2 h-5"></div>
         </footer>
         
+        <!-- Developer Info Footer -->
         <footer class="mt-4 sm:mt-6 border-t pt-4 text-gray-600 font-sans">
             <div class="flex flex-col items-center text-center space-y-2">
                 <p class="font-bold text-lg sm:text-xl text-gray-800">Kanan Pandit</p>
@@ -128,9 +165,9 @@
                     <p>📱 Phone: <a href="tel:+917384661310" class="hover:underline">+91 7384661310</a></p>
                 </div>
                 <p class="text-xs mt-2">Made with ❤️ by <span class="font-semibold">Kanan Pandit</span></p>
-                <button id="change-name-button" class="w-full sm:w-auto bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-5 rounded-full shadow-lg text-sm sm:text-base mt-4">নাম পরিবর্তন করুন</button>
             </div>
         </footer>
+
     </div>
 
     <script>
@@ -155,11 +192,10 @@
         const closeQaModalButton = document.getElementById('close-qa-modal');
         const startRecognitionButton = document.getElementById('start-recognition-button');
         const recognitionStatus = document.getElementById('recognition-status');
-        const changeNameButton = document.getElementById('change-name-button');
         
-        // --- Personalization & Modal Logic ---
+        // --- Personalization Logic ---
         function showPersonalizedView(name) {
-            mainGreeting.textContent = `৭৯তম শুভ স্বাধীনতা দিবস, ${name}!`;
+            mainGreeting.textContent = `শুভ স্বাধীনতা দিবস, ${name}!`;
             nameModal.classList.add('hidden');
             mainContent.classList.remove('hidden');
         }
@@ -169,6 +205,9 @@
             if (name) {
                 localStorage.setItem('visitorName', name);
                 showPersonalizedView(name);
+            } else {
+                nameInput.placeholder = "অনুগ্রহ করে একটি নাম লিখুন!";
+                nameInput.classList.add('border-red-500');
             }
         });
         
@@ -180,75 +219,107 @@
             else nameModal.classList.remove('hidden');
         });
 
-        changeNameButton.addEventListener('click', () => {
-            localStorage.removeItem('visitorName');
-            mainContent.classList.add('hidden');
-            nameModal.classList.remove('hidden');
-            nameInput.value = '';
-            nameInput.focus();
-        });
-
-        // --- Tone.js Music Logic ---
+        // --- Music & Voice Logic ---
         let musicPlaying = false;
         const synth = new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.005, decay: 0.1, sustain: 0.3, release: 1 } }).toDestination();
         const melody = [ { time: '0:0', note: 'E4', duration: '8n' }, { time: '0:0:2', note: 'F#4', duration: '8n' }, { time: '0:1', note: 'G4', duration: '4n' }, { time: '0:2', note: 'G4', duration: '8n' }, { time: '0:2:2', note: 'G4', duration: '8n' }, { time: '0:3', note: 'G4', duration: '4n' }, { time: '1:0', note: 'G4', duration: '8n' }, { time: '1:0:2', note: 'F#4', duration: '8n' }, { time: '1:1', note: 'E4', duration: '4n' }, { time: '1:2', note: 'D4', duration: '4n' }, { time: '1:3', note: 'E4', duration: '4n' }, { time: '2:0', note: 'E4', duration: '8n' }, { time: '2:0:2', note: 'F#4', duration: '8n' }, { time: '2:1', note: 'G4', duration: '4n' }, { time: '2:2', note: 'G4', duration: '8n' }, { time: '2:2:2', note: 'G4', duration: '8n' }, { time: '2:3', note: 'G4', duration: '4n' }, { time: '3:0', note: 'A4', duration: '4n' }, { time: '3:1', note: 'B4', duration: '4n' }, { time: '3:2', note: 'A4', duration: '4n' }, { time: '3:3', note: 'G4', duration: '4n' }, { time: '4:0', note: 'C5', duration: '4n' }, { time: '4:1', note: 'C5', duration: '4n' }, { time: '4:2', note: 'B4', duration: '4n' }, { time: '4:3', note: 'A4', duration: '4n' }, { time: '5:0', note: 'G4', duration: '2n' }, { time: '5:2', note: 'A4', duration: '2n' }, { time: '6:0', note: 'B4', duration: '4n' }, { time: '6:1', note: 'B4', duration: '4n' }, { time: '6:2', note: 'A4', duration: '4n' }, { time: '6:3', note: 'G4', duration: '4n' }, { time: '7:0', note: 'F#4', duration: '2n' }, { time: '7:2', note: 'G4', duration: '2n' } ];
         const part = new Tone.Part((time, value) => { synth.triggerAttackRelease(value.note, value.duration, time); }, melody).start(0);
         part.loop = true; part.loopStart = 0; part.loopEnd = '8m';
-        Tone.Transport.pause(); // Start paused
 
         musicButton.addEventListener('click', async () => {
             if (Tone.context.state !== 'running') await Tone.start();
             if (!musicPlaying) {
                 Tone.Transport.start();
                 musicButton.textContent = 'সঙ্গীত চলছে...';
+                musicButton.classList.replace('bg-blue-700', 'bg-green-600');
+                musicButton.classList.replace('hover:bg-blue-800', 'hover:bg-green-700');
                 musicPlaying = true;
             } else {
-                Tone.Transport.pause();
-                musicButton.textContent = 'সঙ্গীত আবার চালান';
+                Tone.Transport.stop();
+                musicButton.textContent = 'দেশাত্মবোধক সঙ্গীত চালান';
+                musicButton.classList.replace('bg-green-600', 'bg-blue-700');
+                musicButton.classList.replace('hover:bg-green-700', 'hover:bg-blue-800');
                 musicPlaying = false;
             }
         });
 
         // --- Gemini TTS and Text Generation ---
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64); const len = binaryString.length; const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) { bytes[i] = binaryString.charCodeAt(i); } return bytes.buffer;
+        }
+        function pcmToWav(pcmData, sampleRate) {
+            const numChannels = 1; const bitsPerSample = 16; const blockAlign = (numChannels * bitsPerSample) / 8;
+            const byteRate = sampleRate * blockAlign; const dataSize = pcmData.length * (bitsPerSample / 8);
+            const buffer = new ArrayBuffer(44 + dataSize); const view = new DataView(buffer);
+            view.setUint32(0, 0x52494646, false); view.setUint32(4, 36 + dataSize, true); view.setUint32(8, 0x57415645, false);
+            view.setUint32(12, 0x666d7420, false); view.setUint32(16, 16, true); view.setUint16(20, 1, true);
+            view.setUint16(22, numChannels, true); view.setUint32(24, sampleRate, true); view.setUint32(28, byteRate, true);
+            view.setUint16(32, blockAlign, true); view.setUint16(34, bitsPerSample, true); view.setUint32(36, 0x64617461, false);
+            view.setUint32(40, dataSize, true); let offset = 44;
+            for (let i = 0; i < pcmData.length; i++, offset += 2) { view.setInt16(offset, pcmData[i], true); }
+            return new Blob([view], { type: 'audio/wav' });
+        }
+
         async function getAndSpeak(textGenPrompt) {
             let wasMusicPlaying = musicPlaying;
-            const allButtons = [geminiTalkButton, musicButton, horoscopeButton, aiAssistantButton, changeNameButton];
+            const allButtons = [geminiTalkButton, musicButton, horoscopeButton, aiAssistantButton];
             allButtons.forEach(btn => btn.disabled = true);
-            if (wasMusicPlaying) Tone.Transport.pause();
+            if (wasMusicPlaying) { Tone.Transport.pause(); }
 
             try {
                 geminiStatus.textContent = 'বার্তা তৈরি হচ্ছে...';
                 let textPayload = { contents: [{ role: "user", parts: [{ text: textGenPrompt }] }] };
-                const apiKey = "AIzaSyCT3lE9Qotl86whCPCykj6WE05SBuaLqFo";
-                let textApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+                const apiKey = "AIzaSyBaKzXWuh240jWKbS7Cfv7GInT-z1D4wvo";
+                let textApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
                 
                 let response = await fetch(textApiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(textPayload) });
-                if (!response.ok) throw new Error(`Text generation failed`);
+                if (!response.ok) {
+                    const errorBody = await response.json().catch(() => response.text());
+                    throw new Error(`Text generation failed: ${JSON.stringify(errorBody)}`);
+                }
                 let result = await response.json();
                 const generatedText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
                 if (!generatedText) throw new Error("Could not get text from Gemini.");
 
-                geminiStatus.textContent = 'বলা হচ্ছে...';
-                if ('speechSynthesis' in window) {
-                    const utterance = new SpeechSynthesisUtterance(generatedText);
-                    utterance.lang = 'bn-IN';
-                    utterance.onend = () => {
-                        geminiStatus.textContent = '';
-                        if (wasMusicPlaying) Tone.Transport.start();
-                        allButtons.forEach(btn => btn.disabled = false);
-                    };
-                    speechSynthesis.speak(utterance);
-                } else {
-                    throw new Error("Browser does not support Speech Synthesis.");
+                geminiStatus.textContent = 'অডিও তৈরি হচ্ছে...';
+                const ttsPrompt = generatedText; 
+                let ttsPayload = { contents: [{ parts: [{ text: ttsPrompt }] }], generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } } }, model: "gemini-2.5-flash-preview-tts" };
+                let ttsApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+                
+                response = await fetch(ttsApiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(ttsPayload) });
+                if (!response.ok) {
+                     const errorBody = await response.json().catch(() => response.text());
+                    throw new Error(`TTS generation failed: ${JSON.stringify(errorBody)}`);
+                }
+                result = await response.json();
+                
+                if (!result.candidates || result.candidates.length === 0) {
+                    console.error("TTS API returned no candidates. Response:", result);
+                    throw new Error("Failed to generate audio from the text.");
                 }
 
+                const audioPart = result?.candidates?.[0]?.content?.parts?.[0];
+                const audioData = audioPart?.inlineData?.data; 
+                const mimeType = audioPart?.inlineData?.mimeType;
+                if (!audioData || !mimeType || !mimeType.startsWith("audio/")) { throw new Error("Invalid audio data received."); }
+
+                geminiStatus.textContent = 'বলা হচ্ছে...';
+                const sampleRate = parseInt(mimeType.match(/rate=(\d+)/)[1], 10);
+                const pcmData = base64ToArrayBuffer(audioData); 
+                const pcm16 = new Int16Array(pcmData);
+                const wavBlob = pcmToWav(pcm16, sampleRate); 
+                const audioUrl = URL.createObjectURL(wavBlob);
+                const audio = new Audio(audioUrl);
+                audio.play();
+                audio.onended = () => {
+                    geminiStatus.textContent = '';
+                    if (wasMusicPlaying) { Tone.Transport.start(); }
+                    allButtons.forEach(btn => btn.disabled = false);
+                };
             } catch (error) {
                 console.error("Error with Gemini feature:", error);
-                let errorMessage = 'দুঃখিত, একটি ত্রুটি ঘটেছে।';
-                if (error.message.includes("API key")) {
-                    errorMessage = 'API কী সঠিক নয়।';
-                }
-                geminiStatus.textContent = errorMessage;
+                geminiStatus.textContent = 'দুঃখিত, একটি ত্রুটি ঘটেছে।';
                 setTimeout(() => {
                     geminiStatus.textContent = '';
                     if (wasMusicPlaying) Tone.Transport.start();
@@ -263,18 +334,32 @@
             getAndSpeak(prompt);
         });
 
+        // --- Horoscope Logic ---
         horoscopeButton.addEventListener('click', () => { horoscopeModal.classList.remove('hidden'); });
         closeHoroscopeModalButton.addEventListener('click', () => { horoscopeModal.classList.add('hidden'); });
 
         function getZodiacSign(date) {
-            const day = date.getDate(); const month = date.getMonth() + 1;
-            if ((month == 1 && day >= 20) || (month == 2 && day <= 18)) return "কুম্ভ"; if ((month == 2 && day >= 19) || (month == 3 && day <= 20)) return "মীন"; if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) return "মেষ"; if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) return "বৃষ"; if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) return "মিথুন"; if ((month == 6 && day >= 21) || (month == 7 && day <= 22)) return "কর্কট"; if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) return "সিংহ"; if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) return "কন্যা"; if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) return "তুলা"; if ((month == 10 && day >= 23) || (month == 11 && day <= 21)) return "বৃশ্চিক"; if ((month == 11 && day >= 22) || (month == 12 && day <= 21)) return "ধনু"; if ((month == 12 && day >= 22) || (month == 1 && day <= 19)) return "মকর";
+            const day = date.getDate();
+            const month = date.getMonth() + 1;
+            if ((month == 1 && day >= 20) || (month == 2 && day <= 18)) return "কুম্ভ";
+            if ((month == 2 && day >= 19) || (month == 3 && day <= 20)) return "মীন";
+            if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) return "মেষ";
+            if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) return "বৃষ";
+            if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) return "মিথুন";
+            if ((month == 6 && day >= 21) || (month == 7 && day <= 22)) return "কর্কট";
+            if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) return "সিংহ";
+            if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) return "কন্যা";
+            if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) return "তুলা";
+            if ((month == 10 && day >= 23) || (month == 11 && day <= 21)) return "বৃশ্চিক";
+            if ((month == 11 && day >= 22) || (month == 12 && day <= 21)) return "ধনু";
+            if ((month == 12 && day >= 22) || (month == 1 && day <= 19)) return "মকর";
         }
 
         submitHoroscopeButton.addEventListener('click', () => {
             const dob = dobInput.value;
             if (dob) {
-                const zodiacSign = getZodiacSign(new Date(dob));
+                const date = new Date(dob);
+                const zodiacSign = getZodiacSign(date);
                 horoscopeModal.classList.add('hidden');
                 const visitorName = localStorage.getItem('visitorName') || 'বন্ধু';
                 const prompt = `আজকের জন্য ${visitorName}-এর রাশিফল তৈরি করুন, যার রাশি ${zodiacSign}। এটি সংক্ষিপ্ত এবং ইতিবাচক রাখুন।`;
@@ -288,24 +373,34 @@
 
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
-            recognition.continuous = false; recognition.lang = 'bn-IN'; recognition.interimResults = false;
-            recognition.onstart = () => { recognitionStatus.textContent = 'শুনছি...'; startRecognitionButton.classList.add('bg-red-500'); };
-            recognition.onresult = (event) => { qaInput.value = event.results[0][0].transcript; };
-            recognition.onerror = (event) => { 
-                console.error("Speech recognition error", event.error); 
-                if (event.error === 'no-speech') {
-                    recognitionStatus.textContent = 'দুঃখিত, কোনো কথা শোনা যায়নি।';
-                } else {
-                    recognitionStatus.textContent = 'দুঃখিত, একটি ত্রুটি ঘটেছে।';
-                }
+            recognition.continuous = false;
+            recognition.lang = 'bn-IN';
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                recognitionStatus.textContent = 'শুনছি...';
+                startRecognitionButton.classList.add('bg-red-500');
             };
-            recognition.onend = () => { 
-                if (recognitionStatus.textContent === 'শুনছি...') {
-                    recognitionStatus.textContent = '';
-                }
-                startRecognitionButton.classList.remove('bg-red-500'); 
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                qaInput.value = transcript;
             };
-            startRecognitionButton.addEventListener('click', () => recognition.start());
+
+            recognition.onerror = (event) => {
+                console.error("Speech recognition error", event.error);
+                recognitionStatus.textContent = 'দুঃখিত, কিছু ভুল হয়েছে।';
+            };
+
+            recognition.onend = () => {
+                recognitionStatus.textContent = '';
+                startRecognitionButton.classList.remove('bg-red-500');
+            };
+
+            startRecognitionButton.addEventListener('click', () => {
+                recognition.start();
+            });
+
         } else {
             startRecognitionButton.disabled = true;
             recognitionStatus.textContent = "আপনার ব্রাউজার ভয়েস সমর্থন করে না।";
@@ -313,99 +408,41 @@
 
         aiAssistantButton.addEventListener('click', () => { qaModal.classList.remove('hidden'); });
         closeQaModalButton.addEventListener('click', () => { qaModal.classList.add('hidden'); });
-        
         submitQaButton.addEventListener('click', () => {
             const question = qaInput.value.trim();
             if (question) {
                 qaModal.classList.add('hidden');
-                const creatorKeywords = ["কে বানিয়েছে", "কে তৈরি করেছে", "তোমার স্রষ্টা", "who made you", "who created you", "your creator"];
-                const isCreatorQuery = creatorKeywords.some(keyword => question.toLowerCase().includes(keyword));
-                let promptForGemini = isCreatorQuery ? "Politely answer in Bengali that you are an AI assistant trained by Kanan Pandit." : question;
-                getAndSpeak(promptForGemini);
+                getAndSpeak(question);
                 qaInput.value = '';
             }
         });
 
-        // --- Animated Flag Background ---
-        const flagCanvas = document.getElementById('flag-canvas');
-        const flagCtx = flagCanvas.getContext('2d');
-        let time = 0;
 
-        function resizeCanvas() {
-            flagCanvas.width = window.innerWidth;
-            flagCanvas.height = window.innerHeight;
+        // --- Confetti Effect ---
+        const canvas = document.getElementById('confetti-canvas'); const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let confettiPieces = []; const numberOfPieces = 150; const colors = ['#FF9933', '#FFFFFF', '#138808'];
+        function createConfetti() {
+            confettiPieces = [];
+            for (let i = 0; i < numberOfPieces; i++) { confettiPieces.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height - canvas.height, size: Math.random() * 8 + 5, color: colors[Math.floor(Math.random() * colors.length)], speed: Math.random() * 3 + 1, angle: Math.random() * 2 * Math.PI, spin: Math.random() < 0.5 ? -1 : 1 }); }
         }
-
-        function drawWavingFlag() {
-            const width = flagCanvas.width;
-            const height = flagCanvas.height;
-            const stripeHeight = height / 3;
-
-            flagCtx.clearRect(0, 0, width, height);
-
-            // Saffron
-            flagCtx.fillStyle = '#FF9933';
-            drawWavyRect(0, 0, width, stripeHeight);
-
-            // White
-            flagCtx.fillStyle = '#FFFFFF';
-            drawWavyRect(0, stripeHeight, width, stripeHeight);
-
-            // Green
-            flagCtx.fillStyle = '#138808';
-            drawWavyRect(0, stripeHeight * 2, width, stripeHeight);
-            
-            // Ashok Chakra
-            drawAshokChakra(width / 2, height / 2);
-
-            time += 0.02;
-            requestAnimationFrame(drawWavingFlag);
-        }
-
-        function drawWavyRect(x, y, w, h) {
-            const amplitude = 15;
-            const frequency = 0.01;
-            
-            flagCtx.beginPath();
-            flagCtx.moveTo(x, y);
-
-            for (let i = x; i < x + w; i++) {
-                flagCtx.lineTo(i, y + Math.sin(i * frequency + time) * amplitude);
+        function updateConfetti() {
+            for (let i = 0; i < confettiPieces.length; i++) {
+                const p = confettiPieces[i]; p.y += p.speed; p.angle += p.spin * 0.05;
+                if (p.y > canvas.height) confettiPieces[i] = { x: Math.random() * canvas.width, y: -20, size: p.size, color: p.color, speed: p.speed, angle: p.angle, spin: p.spin };
             }
-            flagCtx.lineTo(x + w, y + h);
-            for (let i = x + w; i > x; i--) {
-                flagCtx.lineTo(i, y + h + Math.sin(i * frequency + time) * amplitude);
-            }
-            flagCtx.closePath();
-            flagCtx.fill();
         }
-
-        function drawAshokChakra(x, y) {
-            const radius = Math.min(flagCanvas.height / 8, 40);
-            flagCtx.save();
-            flagCtx.translate(x, y + Math.sin(x * 0.01 + time) * 15);
-            flagCtx.strokeStyle = '#000080';
-            flagCtx.lineWidth = 2;
-            
-            // Outer circle
-            flagCtx.beginPath();
-            flagCtx.arc(0, 0, radius, 0, 2 * Math.PI);
-            flagCtx.stroke();
-
-            // 24 spokes
-            for (let i = 0; i < 24; i++) {
-                flagCtx.beginPath();
-                flagCtx.moveTo(0, 0);
-                flagCtx.lineTo(radius * Math.cos(i * Math.PI / 12), radius * Math.sin(i * Math.PI / 12));
-                flagCtx.stroke();
+        function drawConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < confettiPieces.length; i++) {
+                const p = confettiPieces[i]; ctx.save(); ctx.fillStyle = p.color;
+                ctx.translate(p.x + p.size / 2, p.y + p.size / 2); ctx.rotate(p.angle);
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size); ctx.restore();
             }
-            flagCtx.restore();
         }
-
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-        drawWavingFlag();
-
+        function animateConfetti() { updateConfetti(); drawConfetti(); requestAnimationFrame(animateConfetti); }
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; createConfetti(); });
+        createConfetti(); animateConfetti();
     </script>
 
 </body>
